@@ -32,4 +32,4 @@ jobs:
         git checkout -b gh-pages
         git add -A
         git commit -m "Github Pages Deployment"
-        git push
+        git push --set-upstream origin gh-pages
