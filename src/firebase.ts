@@ -1,9 +1,16 @@
 // Import the functions you need from the SDKs you need
 // import '@firebase/app'
 // import '@firebase/firestore'
-import {onUnmounted, ref} from 'vue'
+import { onUnmounted, ref } from 'vue'
 import firebase from 'firebase/compat'
-import initializeApp = firebase.initializeApp;
+import {
+  getAuth,
+  getRedirectResult,
+  signInWithRedirect,
+  User,
+} from 'firebase/auth'
+import initializeApp = firebase.initializeApp
+import GoogleAuthProvider = firebase.auth.GoogleAuthProvider
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,12 +27,26 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
+const provider = new GoogleAuthProvider()
+const auth = getAuth()
+const currentUser = ref<User | undefined>(undefined)
+
+export const signIn = () => signInWithRedirect(auth, provider)
+export const isLoggedIn = async () => {
+  await getRedirectResult(auth).then((result) => {
+    console.log(result)
+    currentUser.value = result?.user
+  })
+  console.log(currentUser.value, !!currentUser.value)
+  return !!currentUser.value
+}
+
 const db = app.firestore()
 export const itemCollection = db.collection('items')
 export const categoryCollection = db.collection('categories')
 
 export interface Item {
-  id: string
+  id?: string
   name: string
   category: string
   tier: number

@@ -22,26 +22,36 @@
           :key="item.id"
           class="leading-loose border-t-2"
         >
-          <td class="text-left px-4">{{ item.name }}</td>
+          <td class="text-left px-4">
+            <span v-show="false">{{ item.id }}</span
+            >{{ item.name }}
+          </td>
           <td>{{ item.category }}</td>
           <td>{{ item.tier }}</td>
           <td>
             <button class="rounded bg-blue-400 my-1">
               <p class="px-2">Edit</p>
             </button>
+            <button class="">
+              <img :src="Dots" alt="Dots" />
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+  <Dialog v-if="showNewItem" @closeModal="showNewItem = false" />
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { useLoadItems } from '@/firebase'
+import Dialog from '@/components/Dialog.vue'
+import Dots from '@/assets/dots.svg'
 
 export default defineComponent({
   name: 'Item List',
+  components: { Dialog },
   setup() {
     const items = useLoadItems()
     const showNewItem = ref<boolean>(false)
@@ -49,6 +59,7 @@ export default defineComponent({
     return {
       items,
       showNewItem,
+      Dots,
     }
   },
 })
