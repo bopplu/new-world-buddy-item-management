@@ -16,12 +16,12 @@ import GoogleAuthProvider = firebase.auth.GoogleAuthProvider
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: `${process.env.VUE_APP_API_KEY}`,
+  apiKey: 'AIzaSyCzMVjUW48VRTYSZdD4Q0aZ8oCy57oOR80',
   authDomain: 'new-world-buddy.firebaseapp.com',
   projectId: 'new-world-buddy',
   storageBucket: 'new-world-buddy.appspot.com',
   messagingSenderId: '743241756745',
-  appId: `${process.env.VUE_APP_APP_ID}`,
+  appId: '1:743241756745:web:437237b8b22ce104b70f98',
 }
 
 // Initialize Firebase
