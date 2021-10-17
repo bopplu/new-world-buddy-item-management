@@ -26,10 +26,8 @@ jobs:
         cache: 'npm'
     - run: npm i
     - run: npm run build
-    - run: |
-        git config user.name "Github Bot"
-        git config user.email actions@github.com
-        git checkout -b gh-pages
-        git add -A
-        git commit -m "Github Pages Deployment"
-        git push --set-upstream origin gh-pages
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4.0.0
+      with:
+        branch: gh-pages
+        folder: dist
