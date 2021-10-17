@@ -1,3 +1,6 @@
 module.exports = {
-  publicPath: '/new-world-buddy-item-management',
+  publicPath:
+    process.env.NODE_ENV === 'production'
+      ? '/new-world-buddy-item-management'
+      : '',
 }
