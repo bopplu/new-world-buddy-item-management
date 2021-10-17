@@ -18,7 +18,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="item in items"
+          v-for="(item, index) in items"
           :key="item.id"
           class="leading-loose border-t-2"
         >
@@ -28,13 +28,30 @@
           </td>
           <td>{{ item.category }}</td>
           <td>{{ item.tier }}</td>
-          <td>
+          <td class="flex flex-row items-center">
             <button class="rounded bg-blue-400 my-1">
               <p class="px-2">Edit</p>
             </button>
-            <button class="">
-              <img :src="Dots" alt="Dots" />
-            </button>
+            <div class="pt-2">
+              <button class="">
+                <img
+                  :src="Dots"
+                  alt="Dots"
+                  height="20"
+                  width="20"
+                  @click="toggleDropdown(index)"
+                />
+              </button>
+              <div
+                :id="'dropdown_' + index"
+                v-show="dropDownOpen && dropDownIndex === index"
+                class="p-2 bg-gray-700"
+              >
+                <ul>
+                  <li @click="delItem(item.id)">Delete</li>
+                </ul>
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -45,7 +62,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { useLoadItems } from '@/firebase'
+import { deleteItem, useLoadItems } from '@/firebase'
 import Dialog from '@/components/Dialog.vue'
 import Dots from '@/assets/dots.svg'
 
@@ -55,11 +72,28 @@ export default defineComponent({
   setup() {
     const items = useLoadItems()
     const showNewItem = ref<boolean>(false)
+    const dropDownOpen = ref(false)
+    const dropDownIndex = ref(-1)
+
+    const toggleDropdown = (index: number) => {
+      dropDownOpen.value = !dropDownOpen.value
+      dropDownIndex.value = index
+      console.log(dropDownOpen, dropDownIndex)
+    }
+
+    const delItem = (id: string) => {
+      deleteItem(id)
+      dropDownOpen.value = false
+    }
 
     return {
       items,
       showNewItem,
       Dots,
+      dropDownOpen,
+      dropDownIndex,
+      toggleDropdown,
+      delItem,
     }
   },
 })

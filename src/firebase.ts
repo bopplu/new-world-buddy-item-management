@@ -34,10 +34,8 @@ const currentUser = ref<User | undefined>(undefined)
 export const signIn = () => signInWithRedirect(auth, provider)
 export const isLoggedIn = async () => {
   await getRedirectResult(auth).then((result) => {
-    console.log(result)
     currentUser.value = result?.user
   })
-  console.log(currentUser.value, !!currentUser.value)
   return !!currentUser.value
 }
 
@@ -59,6 +57,7 @@ export interface Ingredient {
 }
 
 export const addItem = (item: Item) => itemCollection.add(item)
+export const deleteItem = (id: string) => itemCollection.doc(id).delete()
 export const updateItem = (id: string, item: Item) =>
   itemCollection.doc(id).update(item)
 
