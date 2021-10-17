@@ -78,7 +78,6 @@ export default defineComponent({
     const toggleDropdown = (index: number) => {
       dropDownOpen.value = !dropDownOpen.value
       dropDownIndex.value = index
-      console.log(dropDownOpen, dropDownIndex)
     }
 
     const delItem = (id: string) => {
