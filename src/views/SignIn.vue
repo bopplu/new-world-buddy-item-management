@@ -1,26 +1,21 @@
 <template>
+  <button @click="router.push('/')">Back</button>
   <p>Logging In</p>
 </template>
 
-<script>
+<script setup>
 import { defineComponent } from 'vue'
 import { isLoggedIn, signIn } from '@/firebase.ts'
 import { useRouter } from 'vue-router'
 
-export default defineComponent({
-  name: 'SignIn',
-  setup() {
-    const router = useRouter()
+const router = useRouter()
 
-    isLoggedIn().then((loggedIn) => {
-      if (!loggedIn) {
-        signIn()
-      } else {
-        router.push('/')
-      }
-    })
-    return {}
-  },
+isLoggedIn().then((loggedIn) => {
+  if (!loggedIn) {
+    signIn()
+  } else {
+    router.push('/')
+  }
 })
 </script>
 

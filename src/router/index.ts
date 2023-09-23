@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '@/views/Home.vue'
-import SignIn from '@/views/SignIn.vue'
-import { isLoggedIn } from '@/firebase'
+import { isLoggedIn, signIn } from '@/firebase'
+import SignIn from "@/views/SignIn.vue";
 
 const routes = [
   {

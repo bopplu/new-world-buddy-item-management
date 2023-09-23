@@ -21,7 +21,7 @@
               id="name"
               ref="firstField"
               placeholder="Name"
-              v-model="name"
+              v-model="state.name"
               type="text"
               class="
                 shadow
@@ -39,8 +39,8 @@
             <input
               id="tier"
               placeholder="Tier"
-              v-model="tier"
-              type="text"
+              v-model="state.tier"
+              type="number"
               class="
                 shadow
                 appearance-none
@@ -59,7 +59,7 @@
             <input
               id="category"
               placeholder="Category"
-              v-model="category"
+              v-model="state.category"
               type="text"
               class="
                 shadow
@@ -84,7 +84,7 @@
               </button>
             </div>
             <div class="flex flex-row flex-wrap">
-              <div v-for="(row, index) in ingredients" :key="index">
+              <div v-for="(row, index) in state.ingredients" :key="index">
                 <input
                   :id="'name_' + index"
                   :name="'name_' + index"
@@ -116,7 +116,7 @@
                     appearance-none
                     border
                     rounded
-                    w-96
+                    w-64
                     leading-10
                     px-4
                   "
@@ -143,56 +143,47 @@
   </teleport>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, ref, toRefs } from 'vue'
-import { addItem, Item } from '@/firebase'
+<script setup lang="ts">
+import { defineProps, reactive, ref, toRefs } from 'vue'
+import { addItem, Ingredient, Item, updateItem } from '@/firebase'
 
-export default defineComponent({
-  name: 'Dialog',
-  emits: ['closeModal'],
-  setup() {
-    const template = { name: '', quantity: '' }
-    const initial = () => ({
-      name: '',
-      tier: '',
-      category: '',
-      ingredients: [{ ...template }],
-    })
-    const state = reactive(initial())
-    const firstField = ref<HTMLInputElement | null>(null)
+interface Props {
+  item: Item
+}
 
-    const pushRow = () => state.ingredients.push({ ...template })
+const props = defineProps<Props>()
 
-    const updateIngredientName = (value: string, index: number) =>
-      (state.ingredients[index].name = value)
-
-    const updateIngredientQuantity = (value: string, index: number) =>
-      (state.ingredients[index].quantity = value)
-
-    const saveItem = () => {
-      const item: Item = {
-        name: state.name.trim(),
-        tier: parseInt(state.tier),
-        category: state.category.trim(),
-        ingredients: state.ingredients
-          .filter((i) => i.name && i.quantity)
-          .map((i) => ({ ...i, quantity: parseInt(i.quantity) })),
-      }
-      Object.assign(state, { ...initial() })
-      firstField.value?.focus()
-      addItem(item)
-    }
-
-    return {
-      ...toRefs(state),
-      pushRow,
-      saveItem,
-      updateIngredientName,
-      updateIngredientQuantity,
-      firstField,
-    }
-  },
+const template: Ingredient = { name: '', quantity: null }
+const initial = (): Item => ({
+  name: '',
+  tier: null,
+  category: '',
+  ingredients: [{ ...template }],
 })
+const state = reactive<Item>(props.item ?? initial())
+const firstField = ref<HTMLInputElement | null>(null)
+
+const pushRow = () => state.ingredients.push({ ...template })
+
+const updateIngredientName = (value: string, index: number) =>
+  (state.ingredients[index].name = value)
+
+const updateIngredientQuantity = (value: string, index: number) =>
+  (state.ingredients[index].quantity = parseInt(value))
+
+const saveItem = () => {
+  const item: Item = {
+    name: state.name.trim(),
+    tier: state.tier,
+    category: state.category.trim(),
+    ingredients: state.ingredients
+      .filter((i) => i.name && i.quantity)
+      .map((i) => ({ ...i, quantity: i.quantity })),
+  }
+  Object.assign(state, { ...initial() })
+  firstField.value?.focus()
+  state.id ? updateItem(state.id, item) : addItem(item)
+}
 </script>
 
 <style scoped></style>

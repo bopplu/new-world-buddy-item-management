@@ -7,6 +7,7 @@ import {
   getAuth,
   getRedirectResult,
   signInWithRedirect,
+  signInWithPopup,
   User,
 } from 'firebase/auth'
 import initializeApp = firebase.initializeApp
@@ -29,14 +30,15 @@ const app = initializeApp(firebaseConfig)
 
 const provider = new GoogleAuthProvider()
 const auth = getAuth()
-const currentUser = ref<User | undefined>(undefined)
+const currentUser = ref<User | null>(null)
 
-export const signIn = () => signInWithRedirect(auth, provider)
+// export const signIn = () => signInWithRedirect(auth, provider)
+export const signIn = async () => {
+  const result = await signInWithPopup(auth, provider)
+  currentUser.value = result?.user
+}
 export const isLoggedIn = async () => {
-  await getRedirectResult(auth).then((result) => {
-    currentUser.value = result?.user
-  })
-  return !!currentUser.value
+    return !!auth.currentUser
 }
 
 const db = app.firestore()
@@ -47,13 +49,13 @@ export interface Item {
   id?: string
   name: string
   category: string
-  tier: number
+  tier: number | null
   ingredients: Ingredient[]
 }
 
 export interface Ingredient {
   name: string
-  quantity: number
+  quantity: number | null
 }
 
 export const addItem = (item: Item) => itemCollection.add(item)

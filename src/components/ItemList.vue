@@ -3,13 +3,21 @@
     <table class="w-full p-4 border-2 border-white">
       <thead class="font-bold">
         <tr class="leading-relaxed">
-          <th class="text-left px-4">Name</th>
+          <th class="text-left px-4">
+            <span>Name</span>
+            <input
+              type="search"
+              class="mx-6 px-3 w-72 rounded-xl bg-transparent"
+              v-model="itemFilter"
+              placeholder="Search..."
+            />
+          </th>
           <th>Category</th>
           <th>Tier</th>
           <th>
             <button
               class="rounded bg-green-400 my-2 px-2 py-1"
-              @click="showNewItem = true"
+              @click="showDialog = true"
             >
               <p>New Item</p>
             </button>
@@ -29,8 +37,8 @@
           <td>{{ item.category }}</td>
           <td>{{ item.tier }}</td>
           <td class="flex flex-row items-center">
-            <button class="rounded bg-blue-400 my-1">
-              <p class="px-2">Edit</p>
+            <button class="rounded bg-blue-400 my-1" @click="onEdit(item)">
+              <span class="px-2">Edit</span>
             </button>
             <div class="pt-2">
               <button class="">
@@ -57,45 +65,49 @@
       </tbody>
     </table>
   </div>
-  <Dialog v-if="showNewItem" @closeModal="showNewItem = false" />
+  <Dialog v-if="showDialog" :item="currentItem" @closeModal="onDialogClose" />
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { deleteItem, useLoadItems } from '@/firebase'
+<script setup lang="ts">
+import { computed, defineComponent, ref } from 'vue'
+import { deleteItem, Item, useLoadItems } from '@/firebase'
 import Dialog from '@/components/Dialog.vue'
 import Dots from '@/assets/dots.svg'
 
-export default defineComponent({
-  name: 'Item List',
-  components: { Dialog },
-  setup() {
-    const items = useLoadItems()
-    const showNewItem = ref<boolean>(false)
-    const dropDownOpen = ref(false)
-    const dropDownIndex = ref(-1)
+const itemFilter = ref<string | null>(null)
+const _items = useLoadItems()
+const items = computed(() =>
+  _items.value.filter(
+    (item) =>
+      !itemFilter.value ||
+      item.name.toLowerCase().includes(itemFilter.value.toLowerCase())
+  )
+)
 
-    const toggleDropdown = (index: number) => {
-      dropDownOpen.value = !dropDownOpen.value
-      dropDownIndex.value = index
-    }
+const showDialog = ref<boolean>(false)
+const dropDownOpen = ref(false)
+const dropDownIndex = ref(-1)
+const currentItem = ref<Item | null>(null)
 
-    const delItem = (id: string) => {
-      deleteItem(id)
-      dropDownOpen.value = false
-    }
+const toggleDropdown = (index: number) => {
+  dropDownOpen.value = !dropDownOpen.value
+  dropDownIndex.value = index
+}
 
-    return {
-      items,
-      showNewItem,
-      Dots,
-      dropDownOpen,
-      dropDownIndex,
-      toggleDropdown,
-      delItem,
-    }
-  },
-})
+const delItem = (id: string) => {
+  deleteItem(id)
+  dropDownOpen.value = false
+}
+
+function onEdit(item: Item) {
+  currentItem.value = item
+  showDialog.value = true
+}
+
+function onDialogClose() {
+  showDialog.value = false
+  currentItem.value = null
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
