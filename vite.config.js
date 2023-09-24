@@ -2,9 +2,11 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 const path = require('path')
-// base: import.meta.env.PROD ? "/new-world-buddy-item-management/" : "/",
+
+const basepath = process.env.PROD ? "/new-world-buddy-item-management/" : "/";
 
 export default defineConfig({
+  path: basepath,
     plugins: [vue()],
     resolve: {
         alias: {
