@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build --production"
   },
   "dependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.2",
